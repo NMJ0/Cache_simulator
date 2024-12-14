@@ -1,5 +1,5 @@
 # Cache_simulator
-This is a cache simulator featuring:
+This is a cache simulator with configurable parameters featuring:
 - **Two-level cache architecture** (L1 and L2)
 - **Victim block** implementation to handle conflict misses
 - **LRU (Least Recently Used)** replacement policy for efficient cache management
