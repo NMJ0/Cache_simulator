@@ -11,4 +11,4 @@ To analyze the performance of the simulator, use:
 ```bash
 make performance
 ```
-The simulation outputs (that I got) are stored in the outputs folder. These results correspond to various configurations tested with the simulator.
+The simulation outputs are stored in the outputs folder. These results correspond to various configurations tested with the simulator.
