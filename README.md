@@ -5,6 +5,7 @@ This is a cache simulator featuring:
 - **LRU (Least Recently Used)** replacement policy for efficient cache management
 
 The simulator integrates with **CACTI** to measure performance metrics such as access time, power consumption, and area
+
 Run the following command to compile the simulator:
 ```bash
 make raw
