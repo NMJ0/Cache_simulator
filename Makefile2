@@ -1,0 +1,21 @@
+# Define the target and the source file
+TARGET = final.out
+SRC = performance.c
+
+# Default target: compile and run the program
+all: $(TARGET)
+	./$(TARGET) >file2.txt
+	cat results.txt file2.txt > output.txt
+	rm file2.txt
+	rm results.txt
+	
+
+# Rule to compile the C file
+$(TARGET): $(SRC)
+	gcc $(SRC) -o $(TARGET)
+	
+
+# Clean up the generated files
+clean:
+	rm -f $(TARGET) 
+
