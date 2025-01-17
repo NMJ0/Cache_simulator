@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h> 
+#include <time.h>
 #include "functions.h"
 typedef struct {
      int read_hits;
@@ -15,7 +16,7 @@ typedef struct {
 } Cache_block;
 
 
-Cache_block cache_block(int assoc, int num_sets, int vc_num_blocks,int block_size, char operation,unsigned int address,int vc_enable,int cache[num_sets][assoc],int counters[num_sets][assoc],int dirty[num_sets][assoc],int vc[vc_num_blocks],int vc_counter[vc_num_blocks],int vc_dirty[vc_num_blocks]) {
+Cache_block cache_block(int assoc, int num_sets, int vc_num_blocks,int block_size, char operation,unsigned int address,int vc_enable,int cache[num_sets][assoc],int counters[num_sets][assoc],int dirty[num_sets][assoc],int vc[vc_num_blocks],int vc_counter[vc_num_blocks],int vc_dirty[vc_num_blocks],int policy,int plru_tree[num_sets][assoc-1],int *x) {
        
     int read_hits=0;
     int read_miss=0;
@@ -44,7 +45,19 @@ Cache_block cache_block(int assoc, int num_sets, int vc_num_blocks,int block_siz
         		
         	 	if (cache[index][i]==tag){
         	 		read_hits+=1;
-        	 		access_block(num_sets,assoc,counters,index, i);
+					if (policy==0){
+						access_block(num_sets,assoc,counters,index, i);
+						
+
+					}
+					else if (policy==1){
+						update_plru(num_sets,assoc,index,plru_tree,i);
+					}
+					else if (policy==2){
+						int f=0;
+					
+					}
+        	 		
         	 		found=1;
         	 		break;	
         	 	}
@@ -83,6 +96,7 @@ Cache_block cache_block(int assoc, int num_sets, int vc_num_blocks,int block_siz
     					}
     				}
     				if (vc_found==0){
+
     					int lru=find_lru_block(num_sets,assoc,counters,index);
     					
     					int vc_lru=find_vc_lru(vc_num_blocks,vc_counter);
@@ -108,8 +122,20 @@ Cache_block cache_block(int assoc, int num_sets, int vc_num_blocks,int block_siz
     				
     			}
     			else {
-	    			
-	    			int lru=find_lru_block(num_sets,assoc,counters,index);
+    				int lru=1;
+	    			if (policy==0){ lru=find_lru_block(num_sets,assoc,counters,index);}
+	    			else if (policy==1){lru=find_plru_block(assoc,num_sets,plru_tree,index);}
+	    			else if (policy==2){
+	    				
+	    				int random_number = rand() % (assoc);
+	    				lru=random_number;
+	    			}
+	    			else if (policy==3){
+	    				lru=*x;
+	    				*x+=1;
+	    				*x=*x % assoc;
+	    			}
+			
 	    			
 	    			if (dirty[index][lru]==1) {
 	    				wb+=1;
@@ -120,7 +146,9 @@ Cache_block cache_block(int assoc, int num_sets, int vc_num_blocks,int block_siz
 	    			}
 	    			cache[index][lru]=tag;
 	    			dirty[index][lru]=0;
-	    			access_miss(num_sets,assoc,counters,index, lru);
+				if (policy==0){access_miss(num_sets,assoc,counters,index, lru);}
+				else if (policy==1){update_plru(num_sets,assoc,index,plru_tree,lru);}
+	    			
     			}
     		}
         
@@ -130,7 +158,13 @@ Cache_block cache_block(int assoc, int num_sets, int vc_num_blocks,int block_siz
         		
         	 	if (cache[index][i]==tag){
         	 		write_hits+=1;
-        	 		access_block(num_sets,assoc,counters,index, i);
+        	 		if (policy==0){
+					access_block(num_sets,assoc,counters,index, i);
+
+				}
+				else if (policy==1){
+					update_plru(num_sets,assoc,index,plru_tree,i);
+				}
         	 		dirty[index][i]=1;
         	 		found=1;
         	 		break;	
@@ -192,9 +226,21 @@ Cache_block cache_block(int assoc, int num_sets, int vc_num_blocks,int block_siz
     				
     			}
     			else {
+    				int lru=1;
     		
 	    			
-	    			int lru=find_lru_block(num_sets,assoc,counters,index);
+	    			if (policy==0){ lru=find_lru_block(num_sets,assoc,counters,index);}
+	    			else if (policy==1){ lru=find_plru_block(assoc,num_sets,plru_tree,index);}
+	    			else if (policy==2){
+	    				
+	    				int random_number = rand() % (assoc);
+	    				lru=random_number;
+	    			}
+	    			else if (policy==3){
+	    				lru=*x;
+	    				*x+=1;
+	    				*x=*x % assoc;
+	    			}
 	    			if (dirty[index][lru]==1) {
 	    				wb+=1;
 	    				unsigned int address_size_without_offset=address_size-(int)log2(block_size);
@@ -204,7 +250,8 @@ Cache_block cache_block(int assoc, int num_sets, int vc_num_blocks,int block_siz
 	    			}
 	    			cache[index][lru]=tag;
 	    			dirty[index][lru]=1;
-	    			access_miss(num_sets,assoc,counters,index, lru);
+	    			if (policy==0){access_miss(num_sets,assoc,counters,index, lru);}
+				else if (policy==1){update_plru(num_sets,assoc,index,plru_tree,lru);}
     			}
     		}
         

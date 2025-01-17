@@ -1,6 +1,6 @@
 
 #define address_size 32
-
+#include <math.h>
 
 
 typedef struct {
@@ -80,15 +80,31 @@ AddressFields extract_fields(unsigned int address,int num_sets,int block_size) {
 
     return fields;
 }
-void initialize_cache(int assoc,int num_sets,int vc_num_blocks,int block_size,int cache[num_sets][assoc],int counters[num_sets][assoc],int dirty[num_sets][assoc],int vc[vc_num_blocks], int vc_counter[vc_num_blocks],int vc_dirty[vc_num_blocks]) {
+void initialize_plru( int assoc, int plru_tree[assoc-1]) {
+    for (int i = 0; i < assoc - 1; i++) {
+        plru_tree[i] = 0;  // Initialize all nodes to 0
+    }
+}
+void initialize_cache(int assoc,int num_sets,int vc_num_blocks,int block_size,int cache[num_sets][assoc],int counters[num_sets][assoc],int dirty[num_sets][assoc],int vc[vc_num_blocks], int vc_counter[vc_num_blocks],int vc_dirty[vc_num_blocks],int policy,int plru_tree[num_sets][assoc-1]) {
     
     for (int i = 0; i < num_sets; i++) {
         for (int j = 0; j < assoc; j++) {
             cache[i][j] = NULL; 
-            counters[i][j] = 0;
+            if (policy==0){
+                counters[i][j] = 0;
+            }
             dirty[i][j]=0;
+        }    
+            
+        if (policy==1){
+            for (int j = 0; j < assoc-1; j++) {
+                plru_tree[i][j]=0;
+            }
+
+            //initialize_plru(assoc,plru_tree);
         }
     }
+    
     for (int i = 0; i < vc_num_blocks; i++) {
     	vc[i]=0;
     	vc_counter[i]=0;
@@ -96,7 +112,54 @@ void initialize_cache(int assoc,int num_sets,int vc_num_blocks,int block_size,in
     }
 }
 
+int find_plru_block( int assoc,int num_sets,int plru_tree[num_sets][assoc-1],int index) {
+    int node_index = 0;
+    int num_level=(int)log2(assoc);
 
+    
+    for (int level = 0; level < num_level; level++) {
+        int direction = plru_tree[index][node_index];
+        node_index = 2 * node_index + 1 + direction; 
+    }
+
+    
+    int block_index = node_index - (assoc - 1);
+    return block_index;
+}
+void update_plru( int num_sets,int assoc,int index,int plru_tree[num_sets][assoc-1],int accessed_block) {
+    int node_index = 0;
+    int num_level=(int)log2(assoc);
+    int a=assoc;
+    node_index=0;
+
+
+    for (int level = 0; level < num_level; level++) {
+        int direction;
+        
+        
+        if (accessed_block >=a/2){
+            direction=0;
+            plru_tree[index][node_index] = direction;
+            node_index=node_index*2+2;
+            
+
+
+        }
+        else{
+            direction=1;
+            plru_tree[index][node_index] = direction;
+            node_index=node_index*2+1;
+
+
+        }
+        accessed_block=accessed_block % (a/2);
+        a=a/2;
+
+
+        
+        
+    }
+}
 
 void print_counters(int assoc,int num_sets,int counters[num_sets][assoc]) {
     
@@ -166,6 +229,7 @@ int find_lru_block(int num_sets,int assoc,int counters[num_sets][assoc], int ind
     }
     return lru_block;
 }
+
 int find_vc_lru(int vc_num_blocks, int vc_counter[vc_num_blocks]) {
     int max_counter = 0;
     int lru_block = 0;

@@ -30,9 +30,9 @@ cacti:
 	fi
 
 run: cacti $(TARGET)
-	@echo "Enter values l1_size l1_assoc l1_block_size l1_vc_num_blocks  l2_size l2_assoc :";
-	@read  l1_size l1_assoc l1_block_size l1_vc_num_blocks  l2_size l2_assoc ; \
-	./$(TARGET)  $$l1_size $$l1_assoc $$l1_block_size $$l1_vc_num_blocks  $$l2_size $$l2_assoc  > results.txt;
+	@echo "Enter values l1_size l1_assoc l1_block_size l1_vc_num_blocks  l2_size l2_assoc policy:";
+	@read  l1_size l1_assoc l1_block_size l1_vc_num_blocks  l2_size l2_assoc policy ; \
+	./$(TARGET)  $$l1_size $$l1_assoc $$l1_block_size $$l1_vc_num_blocks  $$l2_size $$l2_assoc $$policy  > results.txt;
 	@echo "results will be available in results.txt file."
 performance:
 	make -f Makefile2
