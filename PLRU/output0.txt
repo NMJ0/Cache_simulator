@@ -1,0 +1,65 @@
+===== Simulator configuration =====
+L1_SIZE      :1024 
+L1_ASSOC     :2 
+L1_BLOCKSIZE :16 
+VC_NUM_BLOCKS:0 
+L2_SIZE      :0 
+L2_ASSOC     :0 
+TRACE_FILE   :gcc_trace.txt 
+
+===== L1 contents =====
+Set 0: 20018A 20028D D  
+Set 1: 20028E D  20028D D  
+Set 2: 200153 D  2001C1 D  
+Set 3: 20013B 20028D D  
+Set 4: 20028D 200223 D  
+Set 5: 2001C1 200149 
+Set 6: 20028D D  20028E D  
+Set 7: 20018A 2001AC D  
+Set 8: 20018A 20018F D  
+Set 9: 20018F D  2000F9 
+Set 10: 20017A 2000FA 
+Set 11: 20018A 200009 
+Set 12: 20028D D  200009 
+Set 13: 2000F9 200009 
+Set 14: 2001AC 200009 
+Set 15: 200009 2001B2 D  
+Set 16: 3D819C D  200009 
+Set 17: 20017B D  200009 
+Set 18: 2000FA 200009 
+Set 19: 2001B2 D  200009 
+Set 20: 200009 2000FA 
+Set 21: 200009 200214 
+Set 22: 200009 20023F 
+Set 23: 20013A 2001AB 
+Set 24: 20018F D  2001F2 
+Set 25: 2001AB 2001AA 
+Set 26: 20018D D  20028D D  
+Set 27: 20028D D  20018D D  
+Set 28: 20028D D  20013A 
+Set 29: 20013A 20018D D  
+Set 30: 20018D D  20028C D  
+Set 31: 2001F8 D  20028C D  
+
+===== Simulation results (raw) =====
+a. number  of L1  reads                : 63640 
+b. number  of L1  read misses          : 8322 
+c. number  of L1  writes               : 36360 
+d. number  of L1  write misses         : 7680 
+e. number  of swap requests            : 0 
+f. swap request rate                   : 0.000000 
+g. number  of swaps                    : 0 
+h. combined L1+VC miss rate            : 0.160020 
+i. number  of write backs from L1/VC   : 8696 
+j. number  of L2  reads                : 0 
+k. number  of L2  read misses          : 0 
+l. number  of L2  writes               : 0 
+m. number  of L2  write misses         : 0 
+n. L2 miss rate                        : 0.000000 
+o. number  of write backs from L2      : 0 
+p. Total memory traffic                : 24698 
+
+===== Simulation results (performance) =====
+ 1. average access time: 3.5352   
+  2. energy-delay product:  513915712.0000 
+  3. total area:  0.0096 
