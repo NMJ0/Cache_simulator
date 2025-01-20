@@ -20,3 +20,4 @@ To analyze the performance of the simulator, use:
 make performance
 ```
 
+![image](https://github.com/user-attachments/assets/5df28962-9d9b-446b-a2a7-6cfa720eca28)
